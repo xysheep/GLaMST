@@ -9,7 +9,7 @@ for i=1:length(observed_sequences)
     for j=i+1:length(observed_sequences)
         % [v,V,edge_list,edit_operations, edit_dist] = EditDistance_all_faster(observed_sequences{i},observed_sequences{j});
         % pairwise_dist(i,j) = min(edit_dist);
-        [v,V] = EditDistance_only(observed_sequences{i},observed_sequences{j});
+        [v,~] = EditDistance_only(observed_sequences{i},observed_sequences{j});
         pairwise_dist(i,j) = v;
         pairwise_dist(j,i) = pairwise_dist(i,j);
         fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b%5d / %5d',i,j);
@@ -17,7 +17,7 @@ for i=1:length(observed_sequences)
 end
 toc
 seed_adj = zeros(size(pairwise_dist));
-[mst_adj,adj2, cost_value] = mst_from_dist_matrix(pairwise_dist, seed_adj);
+[mst_adj,adj2, ~] = mst_from_dist_matrix(pairwise_dist, seed_adj);
 seed_adj = sparse(double(adj2==1));
 
 tic
@@ -66,7 +66,7 @@ while sum(reconstructed_indicator==0)~=0
         all_unique_operations_weights = [];
         for j=1:length(children_ind)
             %fprintf('\n i = %d\tj = %d\n',parent_ind(i),children_ind(j));
-            [v,V,edge_list,edit_operations, edit_dist, unique_operations, unique_operations_weights] = EditDistance_all_fastest(all_sequences{parent_ind(i)},all_sequences{children_ind(j)});
+            [~,~,~,~, ~, unique_operations, unique_operations_weights] = EditDistance_all_fastest(all_sequences{parent_ind(i)},all_sequences{children_ind(j)});
             all_unique_operations = [all_unique_operations; unique_operations];
             all_unique_operations_weights = [all_unique_operations_weights; unique_operations_weights];
         end
@@ -121,7 +121,7 @@ while sum(reconstructed_indicator==0)~=0
         for i=1:length(all_sequences)-1
             % [v,V,edge_list,edit_operations, edit_dist] = EditDistance_all_faster(all_sequences{end},all_sequences{i});
             % pairwise_dist(i,length(all_sequences)) = min(edit_dist);
-            [v,V] = EditDistance_only(all_sequences{end},all_sequences{i});
+            [v,~] = EditDistance_only(all_sequences{end},all_sequences{i});
             pairwise_dist(i,length(all_sequences)) = v;
             pairwise_dist(length(all_sequences),i) = pairwise_dist(i,length(all_sequences));
         end

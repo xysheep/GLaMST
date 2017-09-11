@@ -253,3 +253,5 @@ pip-log.txt
 # folders  
 EditDistance/
 Emory IgTree real data/
+data/
+test/
