@@ -137,12 +137,12 @@ while sum(reconstructed_indicator==0)~=0
 
     fprintf('    Iteratived build the tree: %5d / %5d',sum(reconstructed_indicator),length(observed_sequences)-sum(reconstructed_observed_indicator));
     toc
-    save reconstruct_tree_minimun_tree_size_tmp.mat
+    %save reconstruct_tree_minimun_tree_size_tmp.mat
 
 end
 
 
-
+load reconstruct_tree_minimun_tree_size_tmp.mat
 % remove unnecessary nodes and edges
 fprintf('    Trim the tree for un-necessary nodes ... \n'); 
 reachable_nodes_ind = find_all_back_reachable_nodes(reconstructed_directed_adj,find(reconstructed_observed_indicator==1));
@@ -160,22 +160,34 @@ pairwise_dist(:,to_remove) = [];
 
 % remove unnecessary nodes and edges
 fprintf('    Rewire the tree to further reduce size ... %d \n', length(all_sequences)); 
+
 while 1
     tic
-    nodes_to_rewire = union(find(reconstructed_observed_indicator==1), find(sum(reconstructed_directed_adj,2)>1));  % observed node, and nodes at branching points
+    fprintf('i = %4d',0);
+    nodes_to_rewire = union(find(reconstructed_observed_indicator==1),...
+        find(sum(reconstructed_directed_adj,2)>1));  % observed node, and nodes at branching points
     tmp_directed_adj = reconstructed_directed_adj;
     tmp_directed_adj(nodes_to_rewire,:) = 0;
-    cost_specific_to_nodes_to_rewire=[];
-    cost_specific_to_rewire_the_node = [];
+    cost_specific_to_nodes_to_rewire=zeros(length(nodes_to_rewire),1);
+    cost_specific_to_rewire_the_node = zeros(length(nodes_to_rewire),1);
     for i=2:length(nodes_to_rewire)
-        back_reachable_nodes = setdiff(find_all_back_reachable_nodes(tmp_directed_adj,nodes_to_rewire(i)), nodes_to_rewire(i));
-        forward_reachable_nodes = setdiff(find_all_back_reachable_nodes(reconstructed_directed_adj',nodes_to_rewire(i)), nodes_to_rewire(i));
-        if length(back_reachable_nodes)~=0
+        fprintf('\b\b\b\b%4d',i);
+        back_reachable_nodes = setdiff(find_all_back_reachable_nodes(...
+            tmp_directed_adj,nodes_to_rewire(i)), nodes_to_rewire(i));
+        forward_reachable_nodes = setdiff(find_all_back_reachable_nodes(...
+            reconstructed_directed_adj',nodes_to_rewire(i)), nodes_to_rewire(i));
+        if ~isempty(back_reachable_nodes)
+            % if connected to other nodes_to_rewire
             cost_specific_to_nodes_to_rewire(i) = length(back_reachable_nodes);
         else
-            cost_specific_to_nodes_to_rewire(i) = (1-reconstructed_observed_indicator(find(reconstructed_directed_adj(:,nodes_to_rewire(i))==1)))*0.1;
+            % if not connected to other nodes_to_rewire
+            cost_specific_to_nodes_to_rewire(i) = (1-reconstructed_observed_indicator...
+                (reconstructed_directed_adj(:,nodes_to_rewire(i))==1))*0.1;
+            %if observed, cost = 0. If not, cost = 0.1
         end
-        unqualified_rewire_destination = unique([back_reachable_nodes(:); nodes_to_rewire(i); find(reconstructed_directed_adj(:,nodes_to_rewire(i))==1); forward_reachable_nodes(:)]);
+        unqualified_rewire_destination = unique([back_reachable_nodes(:); ...
+            nodes_to_rewire(i); find(reconstructed_directed_adj(:,nodes_to_rewire(i))==1);...
+            forward_reachable_nodes(:)]);
         tmp = pairwise_dist(:,nodes_to_rewire(i));  
         tmp(unqualified_rewire_destination) = size(reconstructed_directed_adj,1)+10;
         if (min(tmp)-1)~=0
@@ -184,7 +196,9 @@ while 1
             cost_specific_to_rewire_the_node(i) = (1-(sum(reconstructed_observed_indicator(tmp==min(tmp)))~=0))*0.1;
         end
     end
+    fprintf('\n');
     % [cost_specific_to_nodes_to_rewire;cost_specific_to_rewire_the_node]
+    %fprintf('\nbenefit = %d\tloss = %d\n',[cost_specific_to_nodes_to_rewire cost_specific_to_rewire_the_node]);
     if sum(cost_specific_to_nodes_to_rewire>cost_specific_to_rewire_the_node)==0  % if no new wiring is good, break
         break;
     end
@@ -230,7 +244,7 @@ while 1
             [~,~,~,~, ~, unique_operations, unique_operations_weights] = EditDistance_all_fastest(all_sequences{best_parent},all_sequences{node_to_rewire});
             unique_operations_position = zeros(size(unique_operations));
             for k=1:length(unique_operations)
-                tmp = [unique_operations{k}(strfind(unique_operations{k},'positioin')+10 : end), ' '];
+                tmp = [unique_operations{k}(strfind(unique_operations{k},'position')+10 : end), ' '];
                 tmp = tmp(1:find(tmp==' ',1)-1);
                 unique_operations_position(k) = str2num(tmp);
             end
@@ -274,7 +288,7 @@ while 1
                 for i=1:length(all_sequences)-1
                     % [~,~,~,~, edit_dist] = EditDistance_all_faster(all_sequences{end},all_sequences{i});
                     % pairwise_dist(i,length(all_sequences)) = min(edit_dist);
-                    [v,V] = EditDistance_only(all_sequences{end},all_sequences{i});
+                    [v,~] = EditDistance_only(all_sequences{end},all_sequences{i});
                     pairwise_dist(i,length(all_sequences)) = v;
                     pairwise_dist(length(all_sequences),i) = pairwise_dist(i,length(all_sequences));
                 end
@@ -298,7 +312,7 @@ while 1
     reconstructed_directed_adj(:,to_remove) = [];
     pairwise_dist(to_remove,:) = [];
     pairwise_dist(:,to_remove) = [];
-    
+    %save Rewire_tree_tmp.mat
     fprintf('    Rewire the tree to further reduce size ... %d   ', length(all_sequences)); 
     toc
 end
