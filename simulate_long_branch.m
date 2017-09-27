@@ -1,4 +1,4 @@
-function simulate_data(filename,sequence_length,num_tree_nodes,sample_size,operation_probability)
+function simulate_long_branch(filename,sequence_length,num_tree_nodes,sample_size,operation_probability)
 
 if ~exist('sequence_length')
     sequence_length = 80;
@@ -17,7 +17,7 @@ end
 
 
 
-fprintf('Simulation:\n');
+fprintf('Simulation: %s\n', filename);
 fprintf('    simulate a tree with %d nodes, and %d observed sequences (include root) .... %5d', num_tree_nodes, sample_size+1, 0);
 
 % generate root sequence" 
@@ -28,15 +28,9 @@ root_sequence = base_pairs(randsample(1:4,sequence_length,true));
 nodes = {root_sequence};
 directed_adj = 0;
 i=1;
-longb = 0;
 while 1
-    if length(longb) > 1
-        w = longb.^2./sum(longb.^2);
-    else
-        w = 1;
-    end
     % randomly pick a node
-    node_ind = randsample(1:length(nodes),1, true, w);
+    node_ind = randsample(1:length(nodes),1);
     % randomly pick an operation
     operation_ind = randsample(1:3, 1, true,  operation_probability);
     % randomly pick a position in this seq
@@ -61,7 +55,6 @@ while 1
         nodes = [nodes;{new_sequence}];
         directed_adj(node_ind,length(nodes))=1;
         directed_adj(length(nodes),node_ind)=0;
-        longb(length(nodes)) = longb(node_ind) + 1;
         i=i+1;
     end
     fprintf('\b\b\b\b\b%5d', i);
@@ -71,9 +64,7 @@ while 1
     end
 end
 adj = double((directed_adj + directed_adj')~=0); 
-[~, parent] = max(directed_adj);
-parent(1) = 0;
-treeplot(parent)
+
 
 % randomly select the observable sequences
 observable_ind = randsample(2:num_tree_nodes, sample_size);
