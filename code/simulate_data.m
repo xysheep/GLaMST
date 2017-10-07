@@ -26,17 +26,17 @@ root_sequence = base_pairs(randsample(1:4,sequence_length,true));
 
 % generate mutated cells and ground truth tree structure
 nodes = {root_sequence};
-directed_adj = 0;
+directed_adj = zeros(num_tree_nodes);
 i=1;
 longb = 0;
 while 1
-    if length(longb) > 1
-        w = longb.^2./sum(longb.^2);
-    else
-        w = 1;
-    end
+%     if length(longb) > 1
+%         w = longb.^2./sum(longb.^2);
+%     else
+%         w = 1;
+%     end
     % randomly pick a node
-    node_ind = randsample(1:length(nodes),1, true, w);
+    node_ind = randsample(1:length(nodes),1);
     % randomly pick an operation
     operation_ind = randsample(1:3, 1, true,  operation_probability);
     % randomly pick a position in this seq
@@ -71,10 +71,8 @@ while 1
     end
 end
 adj = double((directed_adj + directed_adj')~=0); 
-[~, parent] = max(directed_adj);
-parent(1) = 0;
-treeplot(parent)
-
+% stats = treestats(directed_adj);
+ori_adj = directed_adj;
 % randomly select the observable sequences
 observable_ind = randsample(2:num_tree_nodes, sample_size);
 is_selected = zeros(1,num_tree_nodes);

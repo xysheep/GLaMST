@@ -142,7 +142,7 @@ while sum(reconstructed_indicator==0)~=0
 end
 
 
-load reconstruct_tree_minimun_tree_size_tmp.mat
+% load reconstruct_tree_minimun_tree_size_tmp.mat
 % remove unnecessary nodes and edges
 fprintf('    Trim the tree for un-necessary nodes ... \n'); 
 reachable_nodes_ind = find_all_back_reachable_nodes(reconstructed_directed_adj,find(reconstructed_observed_indicator==1));
@@ -244,7 +244,7 @@ while 1
             [~,~,~,~, ~, unique_operations, unique_operations_weights] = EditDistance_all_fastest(all_sequences{best_parent},all_sequences{node_to_rewire});
             unique_operations_position = zeros(size(unique_operations));
             for k=1:length(unique_operations)
-                tmp = [unique_operations{k}(strfind(unique_operations{k},'position')+10 : end), ' '];
+                tmp = [unique_operations{k}(strfind(unique_operations{k},'position')+9 : end), ' '];
                 tmp = tmp(1:find(tmp==' ',1)-1);
                 unique_operations_position(k) = str2num(tmp);
             end
