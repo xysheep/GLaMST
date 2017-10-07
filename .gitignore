@@ -257,3 +257,4 @@ igtree_real/
 data/
 test/
 manuscript/
+*.sh
