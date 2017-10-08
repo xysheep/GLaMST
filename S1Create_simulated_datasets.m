@@ -45,12 +45,11 @@ for i = 1:length(op)
         load(filename,'nodes','observed_sequences');
         outfilename = [filename(1:end-3) 'out.mat'];
 %         if exist(outfilename,'file') ~=2
-            [reconstructed_nodes,reconstructed_directed_adj,reconstructed_is_selected] = reconstruct_tree_minimun_tree_size(observed_sequences);
+            [reconstructed_nodes,mst_adj,reconstructed_is_selected, reconstructed_directed_adj] = reconstruct_tree_minimun_tree_size(observed_sequences);
             save(outfilename,'reconstructed_nodes','reconstructed_directed_adj','reconstructed_is_selected')
 %         else
 %             load(outfilename,'reconstructed_nodes');
 %         end
-        
     end
 end
 

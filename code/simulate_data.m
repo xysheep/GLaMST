@@ -72,7 +72,6 @@ while 1
 end
 adj = double((directed_adj + directed_adj')~=0); 
 % stats = treestats(directed_adj);
-ori_adj = directed_adj;
 % randomly select the observable sequences
 observable_ind = randsample(2:num_tree_nodes, sample_size);
 is_selected = zeros(1,num_tree_nodes);

@@ -5,7 +5,7 @@ s = struct;
 s.SIZE = size(adj,1);
 s.OD_Root = sum(adj(1,:));
 s.OD_Avg = mean(sum(adj,2));
-s.OD_Ratio = s.OD_Root./mean(sum(adj(2,:),2));
+s.OD_Ratio = s.OD_Root./mean(sum(adj(2:end,:),2));
 %% Find distance from all nodes to root
 n = size(adj, 1);
 depth = zeros(n, 1);
@@ -17,27 +17,38 @@ while ~isempty(queue)
         depth(idx) = depth(adj(:,idx)==1) + 1;
     end
 end
+max_depth = max(depth);
+if sum(depth==max_depth)>1
+    s.T = max_depth;
+else
+    s.T = max_depth;
+end
 %%  Find all leaves 
 leaf_idx = find(sum(adj,2)==0)';
 PLs = depth(leaf_idx);
 s.PL_Min = min(PLs);
 s.PL_Avg = mean(PLs);
 %% Find the first split nodes
-i = 1;
-while sum(adj(i,:))<=1
-    i = find(adj(i,:));
+split_idx = find(sum(adj, 2) > 1)';
+if isempty(split_idx)
+    s.DRSN_Min = nan;
+    s.DLFSN_Min = nan;
+    s.DLFSN_Avg = nan;
+    s.DASN_Avg = nan;
+    s.DASN_Min = nan;
+    return
 end
-s.DRSN_Min = depth(i);
+[~, i ] = max(depth(split_idx));
+s.DRSN_Min = depth(split_idx(i));
 s.DLFSN_Min = s.PL_Min - s.DRSN_Min;
 s.DLFSN_Avg = s.PL_Avg - s.DRSN_Min;
-max_depth = max(depth);
-if sum(depth==max_depth)>1
-    s.T = 0;
-else
-    s.T = max_depth;
-end
+
 %% Find all split nodes
-split_idx = find(sum(adj, 2) > 1)';
+if length(split_idx) == 1
+    s.DASN_Avg = nan;
+    s.DASN_Min = nan;
+    return
+end
 pair_SN_dists = pdist2(depth(split_idx), depth(split_idx), 'cityblock');
 s.DASN_Min = min(min(pair_SN_dists(pair_SN_dists>0)));
 queue = 1;

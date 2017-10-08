@@ -163,7 +163,6 @@ fprintf('    Rewire the tree to further reduce size ... %d \n', length(all_seque
 
 while 1
     tic
-    fprintf('i = %4d',0);
     nodes_to_rewire = union(find(reconstructed_observed_indicator==1),...
         find(sum(reconstructed_directed_adj,2)>1));  % observed node, and nodes at branching points
     tmp_directed_adj = reconstructed_directed_adj;
@@ -171,7 +170,6 @@ while 1
     cost_specific_to_nodes_to_rewire=zeros(length(nodes_to_rewire),1);
     cost_specific_to_rewire_the_node = zeros(length(nodes_to_rewire),1);
     for i=2:length(nodes_to_rewire)
-        fprintf('\b\b\b\b%4d',i);
         back_reachable_nodes = setdiff(find_all_back_reachable_nodes(...
             tmp_directed_adj,nodes_to_rewire(i)), nodes_to_rewire(i));
         forward_reachable_nodes = setdiff(find_all_back_reachable_nodes(...
@@ -196,7 +194,6 @@ while 1
             cost_specific_to_rewire_the_node(i) = (1-(sum(reconstructed_observed_indicator(tmp==min(tmp)))~=0))*0.1;
         end
     end
-    fprintf('\n');
     % [cost_specific_to_nodes_to_rewire;cost_specific_to_rewire_the_node]
     %fprintf('\nbenefit = %d\tloss = %d\n',[cost_specific_to_nodes_to_rewire cost_specific_to_rewire_the_node]);
     if sum(cost_specific_to_nodes_to_rewire>cost_specific_to_rewire_the_node)==0  % if no new wiring is good, break
@@ -273,7 +270,7 @@ while 1
             
             if ismember({new_sequence},all_sequences(setdiff(1:end,to_remove)))
                 new_sequence_exist = setdiff(find(ismember(all_sequences, {new_sequence})), to_remove);
-                if ismember(new_sequence_exist, find_all_back_reachable_nodes(reconstructed_directed_adj',node_to_rewire));
+                if ismember(new_sequence_exist, find_all_back_reachable_nodes(reconstructed_directed_adj',node_to_rewire))
                     reconstructed_directed_adj(best_parent, new_sequence_exist) = 1;
                     reconstructed_directed_adj(new_sequence_exist, best_parent) = 0;
                     mst_adj(best_parent, new_sequence_exist)=1;
