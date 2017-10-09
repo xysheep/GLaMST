@@ -56,6 +56,7 @@ close all
 titles = {'Tree size', 'OD Root', 'OD Avg', 'OD Ratio',...
     'T', 'PL Min', 'PL Avg', 'DRSN Min', 'DLFSN Min', ...
     'DLFSN Avg', 'DASN Min', 'DASN Avg'};	
+%% hist plot, bad visualization
 figs = cell(9,1);
 for i = 1:9
     figs{i} = figure('pos',[100 100 1200 800]);
@@ -70,30 +71,49 @@ for i = 1:9
     end
     %legend('Igtree', 'Peng')
 end
-figure('pos', [200 200 1400 600])
-for i = [3 6 9]
-    subplot(2,3,3+i/3)
+%% boxplot
+close all
+for i = 1:9
+    figure('Name',num2str(i),'pos', [200 200 1400 600])
+    subplot(1,2,1)
     boxplot((stats{i,3}-stats{i,1})./abs(prctile(stats{i,1}, 99)-prctile(stats{i,1}, 1)));
-    axis([0 13 -1.5 1.5])
+    if i <9 
+        axis([0 13 -1.5 1.5])
+    else 
+        axis([0 13 -2.2 2.2])
+    end
     xticks(1:12)
     xticklabels(titles)
     xtickangle(45)
     title(sprintf('Diff Peng and Real (sim%d)',i))
-    subplot(2,3,i/3)
+    subplot(1,2,2)
     boxplot((stats{i,2}-stats{i,1})./abs(prctile(stats{i,1}, 99)-prctile(stats{i,1}, 1)));
-    axis([0 13 -1.5 1.5])
+    if i <9 
+        axis([0 13 -1.5 1.5])
+    else 
+        axis([0 13 -2.2 2.2])
+    end
     title(sprintf('Diff igtree and Real (sim%d)',i))
     xticks(1:12)
     xticklabels(titles)
     xtickangle(45)
+    print(sprintf('manuscript/figures/FeatureDiffSim%d.jpeg',i),'-djpeg')
 end
-
-
-
-
-
-
-
-
+%% Density curve on tree size
+figure;
+for i = 1:9
+    subplot(3,3,i);
+    hold on
+    h2 = histogram(stats{i, 3}(:,1)-stats{i, 1}(:, 1));
+    h2.FaceAlpha = 0.5;
+    h1 = histogram(stats{i, 2}(:,1)-stats{i, 1}(:, 1));
+    h1.FaceAlpha = 0.5;
+    % plot([0 0],[0 0.26])
+    % axis([-20 20 0 0.26])
+    xlabel('Tree size difference to real tree');
+    ylabel('Frequency');
+    hold off
+    legend('Peng','Igtree');
+end
 
 

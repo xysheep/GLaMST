@@ -1,4 +1,4 @@
-function [realadj, Igtreeadj, Pengadj] = prepareadj(prefix)
+function [Igtreeadj, Pengadj, Igtreeselected, Pengselected] = prepareadj2(prefix)
 %% Igtree results
 filename = [prefix,'.pir.out.tree'];
 fid = fopen(filename);
@@ -11,15 +11,13 @@ while ~feof(fid)
 end
 fclose(fid);
 Igtreeadj(max(size(Igtreeadj)),max(size(Igtreeadj))) = 0;
-%% Real tree 
-filename = [prefix,'.mat'];
-load(filename,'directed_adj'); 
-realadj = sparse(directed_adj);
+Igtreeselected = zeros(size(Igtreeadj,1), 1);
+Igtreeselected(csvread('data/real.out.id')+1) = 1;
 %% Peng reconstructed tree
 filename = [prefix,'.out.mat'];
-load(filename,'reconstructed_directed_adj'); 
+load(filename,'reconstructed_directed_adj', 'reconstructed_is_selected'); 
 Pengadj = sparse(reconstructed_directed_adj);
-
+Pengselected = reconstructed_is_selected;
 % figure;
 % subplot(1,3,1)
 % treeplotA(realadj);

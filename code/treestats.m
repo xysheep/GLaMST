@@ -38,7 +38,7 @@ if isempty(split_idx)
     s.DASN_Min = nan;
     return
 end
-[~, i ] = max(depth(split_idx));
+[~, i ] = min(depth(split_idx));
 s.DRSN_Min = depth(split_idx(i));
 s.DLFSN_Min = s.PL_Min - s.DRSN_Min;
 s.DLFSN_Avg = s.PL_Avg - s.DRSN_Min;
