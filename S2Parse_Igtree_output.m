@@ -115,5 +115,45 @@ for i = 1:9
     hold off
     legend('Peng','Igtree');
 end
+%% Scatter plot for each feature
 
+figure;
+for i_ft = 1:12
+    subplot(3, 4, i_ft);
+    hold on;
+
+    c = kron([1 1 1], [1 2 3]);
+    shape = {'d','d','d','^','^','^','o','o','o'};
+    colormap jet;
+    rng(9464);
+    for i = 1:9
+        d2 = abs(stats{i, 2}(:,i_ft)-stats{i, 1}(:, i_ft)) + rand(500, 1)/5 * i;
+        d3 = abs(stats{i, 3}(:,i_ft)-stats{i, 1}(:, i_ft)) + rand(500, 1)/5 * i;
+        s = scatter(d2, d3, 25 * ones(size(d2)), c(i * ones(size(d2))), 'filled');
+        s.Marker = shape{i};
+    end
+    plot([-0.5 9999], [-0.5 9999]);
+    xlabel('Igtree');
+    ylabel('Peng');
+    title('Tree feature difference from real tree');
+    legend({'1','2','3','4','5','6','7','8','9'})
+    axis([-0.5 max([d2;d3])+0.5 -0.5 max([d2;d3])+0.5])
+end
+
+%% Grouped boxplot for each feature
+for i_ft = 1:12
+    subplot(3,4,i_ft)
+    d = [];
+    sims = [];
+    algs = [];
+    for i = [3 6 9]
+        d2 = abs(stats{i, 2}(:,i_ft)-stats{i, 1}(:, i_ft));
+        d3 = abs(stats{i, 3}(:,i_ft)-stats{i, 1}(:, i_ft));
+        d = [d;d2;d3];
+        sims = [sims; i * ones(size([d2;d3]))];
+        algs = [algs; ones(size(d2)); 2 * ones(size(d3))];
+    end
+    boxplot(d, {sims, algs},'factorgap',[10,0]);
+    title(titles{i_ft})
+end
 
