@@ -100,20 +100,28 @@ for i = 1:9
     print(sprintf('manuscript/figures/FeatureDiffSim%d.jpeg',i),'-djpeg')
 end
 %% Density curve on tree size
-figure;
-for i = 1:9
-    subplot(3,3,i);
-    hold on
-    h2 = histogram(stats{i, 3}(:,1)-stats{i, 1}(:, 1));
-    h2.FaceAlpha = 0.5;
-    h1 = histogram(stats{i, 2}(:,1)-stats{i, 1}(:, 1));
-    h1.FaceAlpha = 0.5;
-    % plot([0 0],[0 0.26])
-    % axis([-20 20 0 0.26])
-    xlabel('Tree size difference to real tree');
-    ylabel('Frequency');
-    hold off
-    legend('Peng','Igtree');
+close all
+for j = 1:12
+    figure('Name',num2str(i),'pos', [200 200 1400 600]);
+    for i = 1:9
+        subplot(3,3,i);
+        hold on
+        h2 = histogram(stats{i, 3}(:,j)-stats{i, 1}(:, j));
+        h2.FaceAlpha = 0.5;
+        h1 = histogram(stats{i, 2}(:,j)-stats{i, 1}(:, j));
+        h1.FaceAlpha = 0.5;
+        bwidth = min(h1.BinWidth, h2.BinWidth);
+        h1.BinWidth = bwidth;
+        h2.BinWidth = bwidth;
+        h2.BinLimits = h1.BinLimits;
+        % plot([0 0],[0 0.26])
+        % axis([-20 20 0 0.26])
+        xlabel(sprintf('%s difference to real tree', titles{j}));
+        ylabel('Frequency');
+        hold off
+        legend('Peng','Igtree');
+    end
+    print(sprintf('manuscript/figures/FeatureHist%d.jpeg',j),'-djpeg')
 end
 %% Scatter plot for each feature
 
