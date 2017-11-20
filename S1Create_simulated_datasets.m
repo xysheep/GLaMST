@@ -53,7 +53,20 @@ for i = 1:length(op)
     end
 end
 
-
+for i = 1:length(op)
+    for k=1:nruns(i)
+        file_ind = k;
+        filename = ['data/Simulated/',foldername{i},'/',num2str(file_ind,'%05d'),'.mat'];
+        load(filename,'nodes','observed_sequences');
+        outfilename = [filename(1:end-3) 'norewire.out.mat'];
+%         if exist(outfilename,'file') ~=2
+            [reconstructed_nodes,mst_adj,reconstructed_is_selected, reconstructed_directed_adj] = reconstruct_tree_minimun_tree_size(observed_sequences, 0);
+            save(outfilename,'reconstructed_nodes','reconstructed_directed_adj','reconstructed_is_selected')
+%         else
+%             load(outfilename,'reconstructed_nodes');
+%         end
+    end
+end
 % %% Merge Igtree results
 % for i = 1:length(op)
 %     igtreefilename = ['sim',num2str(i),'.table.csv'];

@@ -1,4 +1,4 @@
-addpath code
+addpath src
 addpath read_write
 foldername = strrep('data/Simulated/sim#','#',cellstr(num2str((1:9)'))');
 nruns = 500;

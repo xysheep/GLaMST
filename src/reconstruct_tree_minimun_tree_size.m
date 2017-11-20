@@ -1,6 +1,8 @@
-function [all_sequences,mst_adj,reconstructed_observed_indicator, reconstructed_directed_adj] = reconstruct_tree_minimun_tree_size(observed_sequences)
+function [all_sequences,mst_adj,reconstructed_observed_indicator, reconstructed_directed_adj] = reconstruct_tree_minimun_tree_size(observed_sequences, rewire)
 
-
+if ~exist('rewire','var')
+    rewire = 1;
+end
 fprintf('Reconstruction:\n');
 tic;
 fprintf('    Initialization compute pairwise edit distance: %5d / %5d',0,0);
@@ -157,164 +159,164 @@ pairwise_dist(to_remove,:) = [];
 pairwise_dist(:,to_remove) = [];
 
 
-
+if rewire
 % remove unnecessary nodes and edges
-fprintf('    Rewire the tree to further reduce size ... %d \n', length(all_sequences)); 
+    fprintf('    Rewire the tree to further reduce size ... %d \n', length(all_sequences)); 
 
-while 1
-    tic
-    nodes_to_rewire = union(find(reconstructed_observed_indicator==1),...
-        find(sum(reconstructed_directed_adj,2)>1));  % observed node, and nodes at branching points
-    tmp_directed_adj = reconstructed_directed_adj;
-    tmp_directed_adj(nodes_to_rewire,:) = 0;
-    cost_specific_to_nodes_to_rewire=zeros(length(nodes_to_rewire),1);
-    cost_specific_to_rewire_the_node = zeros(length(nodes_to_rewire),1);
-    for i=2:length(nodes_to_rewire)
-        back_reachable_nodes = setdiff(find_all_back_reachable_nodes(...
-            tmp_directed_adj,nodes_to_rewire(i)), nodes_to_rewire(i));
-        forward_reachable_nodes = setdiff(find_all_back_reachable_nodes(...
-            reconstructed_directed_adj',nodes_to_rewire(i)), nodes_to_rewire(i));
-        if ~isempty(back_reachable_nodes)
-            % if connected to other nodes_to_rewire
-            cost_specific_to_nodes_to_rewire(i) = length(back_reachable_nodes);
-        else
-            % if not connected to other nodes_to_rewire
-            cost_specific_to_nodes_to_rewire(i) = (1-reconstructed_observed_indicator...
-                (reconstructed_directed_adj(:,nodes_to_rewire(i))==1))*0.1;
-            %if observed, cost = 0. If not, cost = 0.1
+    while 1
+        tic
+        nodes_to_rewire = union(find(reconstructed_observed_indicator==1),...
+            find(sum(reconstructed_directed_adj,2)>1));  % observed node, and nodes at branching points
+        tmp_directed_adj = reconstructed_directed_adj;
+        tmp_directed_adj(nodes_to_rewire,:) = 0;
+        cost_specific_to_nodes_to_rewire=zeros(length(nodes_to_rewire),1);
+        cost_specific_to_rewire_the_node = zeros(length(nodes_to_rewire),1);
+        for i=2:length(nodes_to_rewire)
+            back_reachable_nodes = setdiff(find_all_back_reachable_nodes(...
+                tmp_directed_adj,nodes_to_rewire(i)), nodes_to_rewire(i));
+            forward_reachable_nodes = setdiff(find_all_back_reachable_nodes(...
+                reconstructed_directed_adj',nodes_to_rewire(i)), nodes_to_rewire(i));
+            if ~isempty(back_reachable_nodes)
+                % if connected to other nodes_to_rewire
+                cost_specific_to_nodes_to_rewire(i) = length(back_reachable_nodes);
+            else
+                % if not connected to other nodes_to_rewire
+                cost_specific_to_nodes_to_rewire(i) = (1-reconstructed_observed_indicator...
+                    (reconstructed_directed_adj(:,nodes_to_rewire(i))==1))*0.1;
+                %if observed, cost = 0. If not, cost = 0.1
+            end
+            unqualified_rewire_destination = unique([back_reachable_nodes(:); ...
+                nodes_to_rewire(i); find(reconstructed_directed_adj(:,nodes_to_rewire(i))==1);...
+                forward_reachable_nodes(:)]);
+            tmp = pairwise_dist(:,nodes_to_rewire(i));  
+            tmp(unqualified_rewire_destination) = size(reconstructed_directed_adj,1)+10;
+            if (min(tmp)-1)~=0
+                cost_specific_to_rewire_the_node(i) = min(tmp)-1; 
+            else
+                cost_specific_to_rewire_the_node(i) = (1-(sum(reconstructed_observed_indicator(tmp==min(tmp)))~=0))*0.1;
+            end
         end
-        unqualified_rewire_destination = unique([back_reachable_nodes(:); ...
-            nodes_to_rewire(i); find(reconstructed_directed_adj(:,nodes_to_rewire(i))==1);...
-            forward_reachable_nodes(:)]);
+        % [cost_specific_to_nodes_to_rewire;cost_specific_to_rewire_the_node]
+        %fprintf('\nbenefit = %d\tloss = %d\n',[cost_specific_to_nodes_to_rewire cost_specific_to_rewire_the_node]);
+        if sum(cost_specific_to_nodes_to_rewire>cost_specific_to_rewire_the_node)==0  % if no new wiring is good, break
+            break;
+        end
+
+        % find the new wiring destination
+        rewire_scores = cost_specific_to_nodes_to_rewire-cost_specific_to_rewire_the_node;
+        [~,i] = max(rewire_scores);
+        node_to_rewire = nodes_to_rewire(i);
+        back_reachable_nodes = setdiff(find_all_back_reachable_nodes(tmp_directed_adj,nodes_to_rewire(i)), nodes_to_rewire(i));
+        forward_reachable_nodes = setdiff(find_all_back_reachable_nodes(reconstructed_directed_adj',nodes_to_rewire(i)), nodes_to_rewire(i));
+        unqualified_rewire_destination = unique([back_reachable_nodes(:); nodes_to_rewire(i); find(reconstructed_directed_adj(:,nodes_to_rewire(i))==1); forward_reachable_nodes(:)]);
         tmp = pairwise_dist(:,nodes_to_rewire(i));  
         tmp(unqualified_rewire_destination) = size(reconstructed_directed_adj,1)+10;
-        if (min(tmp)-1)~=0
-            cost_specific_to_rewire_the_node(i) = min(tmp)-1; 
+        rewire_destinations = find(tmp==min(tmp));
+        if sum(reconstructed_observed_indicator(rewire_destinations))~=0
+            rewire_destinations = rewire_destinations(reconstructed_observed_indicator(rewire_destinations)==1);
+        end
+        rewire_destination = rewire_destinations(1);
+
+        % perform the rewiring
+        parent_of_node_to_rewire = find(reconstructed_directed_adj(:,node_to_rewire)==1);
+        reconstructed_directed_adj(parent_of_node_to_rewire, node_to_rewire)=0;
+        mst_adj(parent_of_node_to_rewire, node_to_rewire)=0;
+        mst_adj(node_to_rewire, parent_of_node_to_rewire)=0;
+
+        reachable_nodes_ind = find_all_back_reachable_nodes(reconstructed_directed_adj,find(reconstructed_observed_indicator==1));
+        to_remove = setdiff(1:size(reconstructed_directed_adj,1),reachable_nodes_ind);
+
+        if pairwise_dist(rewire_destination, node_to_rewire)==1
+            reconstructed_directed_adj(rewire_destination, node_to_rewire) = 1;
+            reconstructed_directed_adj(node_to_rewire, rewire_destination) = 0;
+            mst_adj(rewire_destination, node_to_rewire)=1;
+            mst_adj(node_to_rewire, rewire_destination)=1;
         else
-            cost_specific_to_rewire_the_node(i) = (1-(sum(reconstructed_observed_indicator(tmp==min(tmp)))~=0))*0.1;
-        end
-    end
-    % [cost_specific_to_nodes_to_rewire;cost_specific_to_rewire_the_node]
-    %fprintf('\nbenefit = %d\tloss = %d\n',[cost_specific_to_nodes_to_rewire cost_specific_to_rewire_the_node]);
-    if sum(cost_specific_to_nodes_to_rewire>cost_specific_to_rewire_the_node)==0  % if no new wiring is good, break
-        break;
-    end
-    
-    % find the new wiring destination
-    rewire_scores = cost_specific_to_nodes_to_rewire-cost_specific_to_rewire_the_node;
-    [~,i] = max(rewire_scores);
-    node_to_rewire = nodes_to_rewire(i);
-    back_reachable_nodes = setdiff(find_all_back_reachable_nodes(tmp_directed_adj,nodes_to_rewire(i)), nodes_to_rewire(i));
-    forward_reachable_nodes = setdiff(find_all_back_reachable_nodes(reconstructed_directed_adj',nodes_to_rewire(i)), nodes_to_rewire(i));
-    unqualified_rewire_destination = unique([back_reachable_nodes(:); nodes_to_rewire(i); find(reconstructed_directed_adj(:,nodes_to_rewire(i))==1); forward_reachable_nodes(:)]);
-    tmp = pairwise_dist(:,nodes_to_rewire(i));  
-    tmp(unqualified_rewire_destination) = size(reconstructed_directed_adj,1)+10;
-    rewire_destinations = find(tmp==min(tmp));
-    if sum(reconstructed_observed_indicator(rewire_destinations))~=0
-        rewire_destinations = rewire_destinations(reconstructed_observed_indicator(rewire_destinations)==1);
-    end
-    rewire_destination = rewire_destinations(1);
-    
-    % perform the rewiring
-    parent_of_node_to_rewire = find(reconstructed_directed_adj(:,node_to_rewire)==1);
-    reconstructed_directed_adj(parent_of_node_to_rewire, node_to_rewire)=0;
-    mst_adj(parent_of_node_to_rewire, node_to_rewire)=0;
-    mst_adj(node_to_rewire, parent_of_node_to_rewire)=0;
-
-    reachable_nodes_ind = find_all_back_reachable_nodes(reconstructed_directed_adj,find(reconstructed_observed_indicator==1));
-    to_remove = setdiff(1:size(reconstructed_directed_adj,1),reachable_nodes_ind);
-    
-    if pairwise_dist(rewire_destination, node_to_rewire)==1
-        reconstructed_directed_adj(rewire_destination, node_to_rewire) = 1;
-        reconstructed_directed_adj(node_to_rewire, rewire_destination) = 0;
-        mst_adj(rewire_destination, node_to_rewire)=1;
-        mst_adj(node_to_rewire, rewire_destination)=1;
-    else
-        % [~,~,~,edit_operations, edit_dist, ~, ~] = EditDistance_all_faster(all_sequences{rewire_destination},all_sequences{node_to_rewire});
-        % [~,I] = min(edit_dist); edit_operations = edit_operations{I};
-        [~,~,~,~, edit_dist, ~, ~] = EditDistance_all_fastest(all_sequences{rewire_destination},all_sequences{node_to_rewire});
-        best_parent = rewire_destination;
-        for i=1:edit_dist 
-            % [~,~,~,edit_operations, edit_dist, ~, ~] = EditDistance_all_faster(all_sequences{best_parent},all_sequences{node_to_rewire});
+            % [~,~,~,edit_operations, edit_dist, ~, ~] = EditDistance_all_faster(all_sequences{rewire_destination},all_sequences{node_to_rewire});
             % [~,I] = min(edit_dist); edit_operations = edit_operations{I};
-            % best_operation = edit_operations{1};
-            [~,~,~,~, ~, unique_operations, unique_operations_weights] = EditDistance_all_fastest(all_sequences{best_parent},all_sequences{node_to_rewire});
-            unique_operations_position = zeros(size(unique_operations));
-            for k=1:length(unique_operations)
-                tmp = [unique_operations{k}(strfind(unique_operations{k},'position')+9 : end), ' '];
-                tmp = tmp(1:find(tmp==' ',1)-1);
-                unique_operations_position(k) = str2num(tmp);
-            end
-            tmp = find(unique_operations_position==min(unique_operations_position(unique_operations_weights == max(unique_operations_weights))) & unique_operations_weights == max(unique_operations_weights)); 
-            tmp = tmp(1);
-            best_operation = unique_operations{tmp};
-            
-            new_sequence = all_sequences{best_parent};
-            % create a new node from the best_parent and best_operation
-            tmp = regexp(best_operation,' ','split');
-            if isequal(tmp{1},'mutate')
-                new_sequence(str2num(tmp{3})) = tmp{5};
-            elseif isequal(tmp{1},'delete')
-                new_sequence(str2num(tmp{3})) = [];
-            elseif isequal(tmp{1},'insert')
-                new_sequence = [new_sequence(1:str2num(tmp{5})), tmp{2}, new_sequence(str2num(tmp{5})+1:length(new_sequence))];
-            end
-            
-            if isequal(new_sequence, all_sequences{node_to_rewire})
-                reconstructed_directed_adj(best_parent, node_to_rewire) = 1;
-                reconstructed_directed_adj(node_to_rewire, best_parent) = 0;
-                mst_adj(best_parent, node_to_rewire)=1;
-                mst_adj(node_to_rewire, best_parent)=1;
-                break;
-            end
-            
-            if ismember({new_sequence},all_sequences(setdiff(1:end,to_remove)))
-                new_sequence_exist = setdiff(find(ismember(all_sequences, {new_sequence})), to_remove);
-                if ismember(new_sequence_exist, find_all_back_reachable_nodes(reconstructed_directed_adj',node_to_rewire))
-                    reconstructed_directed_adj(best_parent, new_sequence_exist) = 1;
-                    reconstructed_directed_adj(new_sequence_exist, best_parent) = 0;
-                    mst_adj(best_parent, new_sequence_exist)=1;
-                    mst_adj(new_sequence_exist, best_parent)=1;
+            [~,~,~,~, edit_dist, ~, ~] = EditDistance_all_fastest(all_sequences{rewire_destination},all_sequences{node_to_rewire});
+            best_parent = rewire_destination;
+            for i=1:edit_dist 
+                % [~,~,~,edit_operations, edit_dist, ~, ~] = EditDistance_all_faster(all_sequences{best_parent},all_sequences{node_to_rewire});
+                % [~,I] = min(edit_dist); edit_operations = edit_operations{I};
+                % best_operation = edit_operations{1};
+                [~,~,~,~, ~, unique_operations, unique_operations_weights] = EditDistance_all_fastest(all_sequences{best_parent},all_sequences{node_to_rewire});
+                unique_operations_position = zeros(size(unique_operations));
+                for k=1:length(unique_operations)
+                    tmp = [unique_operations{k}(strfind(unique_operations{k},'position')+9 : end), ' '];
+                    tmp = tmp(1:find(tmp==' ',1)-1);
+                    unique_operations_position(k) = str2num(tmp);
                 end
-                best_parent = find(ismember(all_sequences, {new_sequence}));
-            else
-                all_sequences = [all_sequences; {new_sequence}];
-                reconstructed_indicator(end+1) = 1;
-                reconstructed_observed_indicator(end+1) = 0;
-                pairwise_dist(length(all_sequences),length(all_sequences)) = 0;
-                for i=1:length(all_sequences)-1
-                    % [~,~,~,~, edit_dist] = EditDistance_all_faster(all_sequences{end},all_sequences{i});
-                    % pairwise_dist(i,length(all_sequences)) = min(edit_dist);
-                    [v,~] = EditDistance_only(all_sequences{end},all_sequences{i});
-                    pairwise_dist(i,length(all_sequences)) = v;
-                    pairwise_dist(length(all_sequences),i) = pairwise_dist(i,length(all_sequences));
+                tmp = find(unique_operations_position==min(unique_operations_position(unique_operations_weights == max(unique_operations_weights))) & unique_operations_weights == max(unique_operations_weights)); 
+                tmp = tmp(1);
+                best_operation = unique_operations{tmp};
+
+                new_sequence = all_sequences{best_parent};
+                % create a new node from the best_parent and best_operation
+                tmp = regexp(best_operation,' ','split');
+                if isequal(tmp{1},'mutate')
+                    new_sequence(str2num(tmp{3})) = tmp{5};
+                elseif isequal(tmp{1},'delete')
+                    new_sequence(str2num(tmp{3})) = [];
+                elseif isequal(tmp{1},'insert')
+                    new_sequence = [new_sequence(1:str2num(tmp{5})), tmp{2}, new_sequence(str2num(tmp{5})+1:length(new_sequence))];
                 end
-                mst_adj(length(all_sequences), best_parent) = 1;
-                mst_adj(best_parent, length(all_sequences)) = 1;
-                reconstructed_directed_adj(best_parent, length(all_sequences)) = 1;
-                reconstructed_directed_adj(length(all_sequences), best_parent) = 0;
-                best_parent = length(all_sequences);
+
+                if isequal(new_sequence, all_sequences{node_to_rewire})
+                    reconstructed_directed_adj(best_parent, node_to_rewire) = 1;
+                    reconstructed_directed_adj(node_to_rewire, best_parent) = 0;
+                    mst_adj(best_parent, node_to_rewire)=1;
+                    mst_adj(node_to_rewire, best_parent)=1;
+                    break;
+                end
+
+                if ismember({new_sequence},all_sequences(setdiff(1:end,to_remove)))
+                    new_sequence_exist = setdiff(find(ismember(all_sequences, {new_sequence})), to_remove);
+                    if ismember(new_sequence_exist, find_all_back_reachable_nodes(reconstructed_directed_adj',node_to_rewire))
+                        reconstructed_directed_adj(best_parent, new_sequence_exist) = 1;
+                        reconstructed_directed_adj(new_sequence_exist, best_parent) = 0;
+                        mst_adj(best_parent, new_sequence_exist)=1;
+                        mst_adj(new_sequence_exist, best_parent)=1;
+                    end
+                    best_parent = find(ismember(all_sequences, {new_sequence}));
+                else
+                    all_sequences = [all_sequences; {new_sequence}];
+                    reconstructed_indicator(end+1) = 1;
+                    reconstructed_observed_indicator(end+1) = 0;
+                    pairwise_dist(length(all_sequences),length(all_sequences)) = 0;
+                    for i=1:length(all_sequences)-1
+                        % [~,~,~,~, edit_dist] = EditDistance_all_faster(all_sequences{end},all_sequences{i});
+                        % pairwise_dist(i,length(all_sequences)) = min(edit_dist);
+                        [v,~] = EditDistance_only(all_sequences{end},all_sequences{i});
+                        pairwise_dist(i,length(all_sequences)) = v;
+                        pairwise_dist(length(all_sequences),i) = pairwise_dist(i,length(all_sequences));
+                    end
+                    mst_adj(length(all_sequences), best_parent) = 1;
+                    mst_adj(best_parent, length(all_sequences)) = 1;
+                    reconstructed_directed_adj(best_parent, length(all_sequences)) = 1;
+                    reconstructed_directed_adj(length(all_sequences), best_parent) = 0;
+                    best_parent = length(all_sequences);
+                end
+
             end
-            
         end
+
+        reachable_nodes_ind = find_all_back_reachable_nodes(reconstructed_directed_adj,find(reconstructed_observed_indicator==1));
+        to_remove = setdiff(1:size(reconstructed_directed_adj,1),reachable_nodes_ind);
+        all_sequences(to_remove) = [];
+        mst_adj(to_remove,:) = [];
+        mst_adj(:,to_remove) = [];
+        reconstructed_observed_indicator(to_remove) = [];
+        reconstructed_directed_adj(to_remove,:) = [];
+        reconstructed_directed_adj(:,to_remove) = [];
+        pairwise_dist(to_remove,:) = [];
+        pairwise_dist(:,to_remove) = [];
+        %save Rewire_tree_tmp.mat
+        fprintf('    Rewire the tree to further reduce size ... %d   ', length(all_sequences)); 
+        toc
     end
-    
-    reachable_nodes_ind = find_all_back_reachable_nodes(reconstructed_directed_adj,find(reconstructed_observed_indicator==1));
-    to_remove = setdiff(1:size(reconstructed_directed_adj,1),reachable_nodes_ind);
-    all_sequences(to_remove) = [];
-    mst_adj(to_remove,:) = [];
-    mst_adj(:,to_remove) = [];
-    reconstructed_observed_indicator(to_remove) = [];
-    reconstructed_directed_adj(to_remove,:) = [];
-    reconstructed_directed_adj(:,to_remove) = [];
-    pairwise_dist(to_remove,:) = [];
-    pairwise_dist(:,to_remove) = [];
-    %save Rewire_tree_tmp.mat
-    fprintf('    Rewire the tree to further reduce size ... %d   ', length(all_sequences)); 
-    toc
+
 end
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
