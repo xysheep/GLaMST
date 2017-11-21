@@ -1,4 +1,4 @@
-function [realadj, Igtreeadj, Pengadj] = prepareadj(prefix)
+function [realadj, Igtreeadj, Pengadj, PengNWadj] = prepareadj(prefix)
 %% Igtree results
 filename = [prefix,'.pir.out.tree'];
 fid = fopen(filename);
@@ -19,6 +19,10 @@ realadj = sparse(directed_adj);
 filename = [prefix,'.out.mat'];
 load(filename,'reconstructed_directed_adj'); 
 Pengadj = sparse(reconstructed_directed_adj);
+%% Peng reconstructed tree without rewire
+filename = [prefix,'.norewire.out.mat'];
+load(filename,'reconstructed_directed_adj'); 
+PengNWadj = sparse(reconstructed_directed_adj);
 
 % figure;
 % subplot(1,3,1)

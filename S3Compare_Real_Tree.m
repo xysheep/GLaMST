@@ -1,5 +1,5 @@
-addpath code
-addpath read_write
+addpath src
+addpath lib
 prefix = 'data\real';
 [b, c, bselected, cselected] = prepareadj2(prefix);
 figtr = cell2mat(struct2cell(treestats(b)))';

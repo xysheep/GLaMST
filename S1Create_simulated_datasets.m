@@ -1,6 +1,6 @@
 %% Generate the data
-addpath code
-addpath read_write
+addpath src
+addpath lib
 op = {[1, 0, 0],[0.98, 0.01, 0.01],[0.9, 0.05, 0.05]};
 op = [op op op];
 foldername = strrep('sim#','#',cellstr(num2str((1:length(op))'))');

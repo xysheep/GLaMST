@@ -255,6 +255,7 @@ EditDistance/
 Emory IgTree real data/
 igtree_real/
 data/
+build/
 test/
 manuscript/
 *.sh
