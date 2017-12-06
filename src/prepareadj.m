@@ -1,4 +1,4 @@
-function [realadj, Igtreeadj, Pengadj, PengNWadj] = prepareadj(prefix)
+function [realadj, Igtreeadj, Pengadj, PengNWadj, phyadj] = prepareadj(prefix)
 %% Igtree results
 filename = [prefix,'.pir.out.tree'];
 fid = fopen(filename);
@@ -23,6 +23,22 @@ Pengadj = sparse(reconstructed_directed_adj);
 filename = [prefix,'.norewire.out.mat'];
 load(filename,'reconstructed_directed_adj'); 
 PengNWadj = sparse(reconstructed_directed_adj);
+%% Phylip reconstructed tree
+filename = [prefix,'.phy.out.tree'];
+fid = fopen(filename);
+phyadj = sparse([]);
+while ~feof(fid)
+    newline = fgetl(fid);
+    cells = split(newline);
+    numbers = cell2mat(cellfun(@str2num, cells(1:end-1), 'UniformOutput',false));
+    phyadj(numbers(1)+1,numbers(2:end)+1) = 1;
+end
+fclose(fid);
+phyadj(max(size(phyadj)),max(size(phyadj))) = 0;
+
+
+
+
 
 % figure;
 % subplot(1,3,1)

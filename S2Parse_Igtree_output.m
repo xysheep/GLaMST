@@ -3,47 +3,58 @@ addpath lib
 foldername = strrep('data/Simulated/sim#','#',cellstr(num2str((1:9)'))');
 nruns = 500;
 directed_adj = [];
-stats = cell(9,4);
+stats = cell(12,4);
 for ind_fd = 1:length(foldername)
     db = 0;
     dc = 0;
     dd = 0;
+    de = 0;
     lsa = zeros(500,12);
     lsb = zeros(500,12);
     lsc = zeros(500,12);
     lsd = zeros(500,12);
-    win = [0 0 0 0 0 0 0 0 0];
+    lse = zeros(500,12);
+    win = zeros(4,3);
     for i = 1:nruns
         prefix = [foldername{ind_fd}, '/',num2str(i,'%05d')];
-        [a, b, c, d] = prepareadj(prefix);
+        [a, b, c, d, e] = prepareadj(prefix);
         db = db + abs(size(b,1)-size(a,1));
         dc = dc + abs(size(c,1)-size(a,1));
         dd = dc + abs(size(d,1)-size(a,1));
+        de = de + abs(size(e,1)-size(a,1));
         if size(b,1) > size(a,1)
-            win(1) = win(1) + 1;
+            win(1,1) = win(1,1) + 1;
         elseif size(b,1) < size(a,1)
-            win(2) = win(2) + 1;
+            win(1,2) = win(1,2) + 1;
         else
-            win(3) = win(3) + 1;
+            win(1,3) = win(1,3) + 1;
         end
         if size(c,1) > size(a,1)
-            win(4) = win(4) + 1;
+            win(2,1) = win(2,1) + 1;
         elseif size(c,1) < size(a,1)
-            win(5) = win(5) + 1;
+            win(2,2) = win(2,2) + 1;
         else
-            win(6) = win(6) + 1;
+            win(2,3) = win(2,3) + 1;
         end
         if size(d,1) > size(a,1)
-            win(7) = win(7) + 1;
+            win(3,1) = win(3,1) + 1;
         elseif size(d,1) < size(a,1)
-            win(8) = win(8) + 1;
+            win(3,2) = win(3,2) + 1;
         else
-            win(9) = win(9) + 1;
+            win(3,3) = win(3,3) + 1;
+        end
+        if size(e,1) > size(a,1)
+            win(4,1) = win(4,1) + 1;
+        elseif size(d,1) < size(a,1)
+            win(4,2) = win(4,2) + 1;
+        else
+            win(4,3) = win(4,3) + 1;
         end
         lsa(i, :) = cell2mat(struct2cell(treestats(a)))';
         lsb(i, :) = cell2mat(struct2cell(treestats(b)))';
         lsc(i, :) = cell2mat(struct2cell(treestats(c)))';
         lsd(i, :) = cell2mat(struct2cell(treestats(d)))';
+        lse(i, :) = cell2mat(struct2cell(treestats(e)))';
         %fprintf('Prefix: %s\t%d\t%d\t%d\n',prefix, size(a, 1), size(b, 1), size(c, 1));
     end
     fprintf('Sim%d: DIgtree %5d\tDPeng %5d\t DNWPeng%5d\n%5d\t%5d%5d\t%5d\t%5d\t%5d\t%5d\t%5d\t%5d\n',ind_fd, db, dc, dd, win); 
@@ -51,6 +62,7 @@ for ind_fd = 1:length(foldername)
     stats{ind_fd, 2} = lsb;
     stats{ind_fd, 3} = lsc;
     stats{ind_fd, 4} = lsd;
+    stats{ind_fe, 5} = lse;
 end
 save('data/simulation.mat','stats');
 %% Generate nrmse for all features on each simulation setting

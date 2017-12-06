@@ -259,3 +259,5 @@ build/
 test/
 manuscript/
 *.sh
+.Rhistory
+.ipynb_checkpoints/
