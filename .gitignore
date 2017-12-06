@@ -261,3 +261,6 @@ manuscript/
 *.sh
 .Rhistory
 .ipynb_checkpoints/
+Untitled.ipynb
+Untitled.ipynb
+*.ipynb
