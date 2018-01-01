@@ -24,11 +24,9 @@ filename = [prefix,'.norewire.out.mat'];
 load(filename,'reconstructed_directed_adj'); 
 PengNWadj = sparse(reconstructed_directed_adj);
 %% Phylip reconstructed tree
-filename = [prefix,'.phy.out.tree'];
+filename = [prefix,'.phy.out.edges'];
 fid = fopen(filename);
 phyadj = sparse([]);
-newline = fgetl(fid);
-physize = str2num(newline)+1;
 while ~feof(fid)
     newline = fgetl(fid);
     cells = split(newline);

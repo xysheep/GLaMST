@@ -1,11 +1,11 @@
-function [tree_bubble_contours] = draw_SPADE_tree(mst_tree, node_positions, node_size, node_data, data, show_color, show_annotation,is_selected, color_scheme, tree_annotations,tree_bubble_contours)
+function [tree_bubble_contours, h] = draw_SPADE_tree(mst_tree, node_positions, node_size, node_data, data, show_color, show_annotation,is_selected, color_scheme, tree_annotations,tree_bubble_contours)
 
 if ~exist('tree_bubble_contours')
     tree_bubble_contours = cell(size(tree_annotations));
 end
 
 % clear the plot
-hold off; plot(0,0,'visible','off'); hold on;
+hold off; h = plot(0,0,'visible','off'); hold on;
 % draw edges
 adj = mst_tree;
 coeff = node_positions;
@@ -146,12 +146,12 @@ for k=1:length(node_size)
     if exist('is_selected') && is_selected(k)==1
         % do nothing;
     else
-        handle_tmp = plot(coeff(1,k),coeff(2,k),'o','markersize',node_size(k), 'markerfacecolor',node_color(k,:),'color',node_color(k,:));
+        handle_tmp = plot(coeff(1,k),coeff(2,k),'.','markersize',node_size(k), 'markerfacecolor',node_color(k,:),'color',node_color(k,:));
     end
 end
 for k=1:length(node_size)
     if exist('is_selected') && is_selected(k)==1
-        handle_tmp = plot(coeff(1,k),coeff(2,k),'s','markersize',node_size(k), 'markerfacecolor',node_color(k,:),'color',node_color(k,:));
+        handle_tmp = plot(coeff(1,k),coeff(2,k),'o','markersize',node_size(k), 'markerfacecolor',node_color(k,:),'color',node_color(k,:));
     else
         % do nothing;
     end

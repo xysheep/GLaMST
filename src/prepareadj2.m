@@ -1,4 +1,4 @@
-function [Igtreeadj, Pengadj, Igtreeselected, Pengselected] = prepareadj2(prefix)
+function [Igtreeadj, Pengadj, phyadj, Igtreeselected, Pengselected, phyadjselected] = prepareadj2(prefix)
 %% Igtree results
 filename = [prefix,'.pir.out.tree'];
 fid = fopen(filename);
@@ -18,6 +18,20 @@ filename = [prefix,'.out.mat'];
 load(filename,'reconstructed_directed_adj', 'reconstructed_is_selected'); 
 Pengadj = sparse(reconstructed_directed_adj);
 Pengselected = reconstructed_is_selected;
+%% dnapars
+filename = [prefix,'.dnapars.tree'];
+fid = fopen(filename);
+phyadj = sparse([]);
+while ~feof(fid)
+    newline = fgetl(fid);
+    cells = split(newline);
+    numbers = cell2mat(cellfun(@str2num, cells(1:end), 'UniformOutput',false));
+    phyadj(numbers(1)+1,numbers(2:end)+1) = 1;
+end
+fclose(fid);
+phyadj(max(size(phyadj)),max(size(phyadj))) = 0;
+phyadjselected = zeros(size(phyadj,1), 1);
+phyadjselected(csvread('data/real.dnapars.id')+1) = 1;
 % figure;
 % subplot(1,3,1)
 % treeplotA(realadj);
