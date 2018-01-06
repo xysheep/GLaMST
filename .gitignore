@@ -262,3 +262,9 @@ manuscript/
 .Rhistory
 .ipynb_checkpoints/
 *.docx
+S1Create_simulated_datasets.m
+S2Parse_Igtree_output.m
+S3Compare_Real_Tree.m
+parseDNAPARS.ipynb
+Untitled.ipynb
+option
