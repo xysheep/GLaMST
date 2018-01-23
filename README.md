@@ -10,6 +10,6 @@ LineageTree.exe fastafilename [...options]
 ```
 # Arguments
 ## Required Arguments
-- fastafilename: name of one fasta file. The first sequence in the fasta file should be root (G. L.). **Sequences in this fasta file should be raw sequence**, not multiple alignment results. 
+- fastafilename: name of one fasta file. The first sequence in the fasta file should be root (G. L.). **Sequences in this fasta file should be original assembled sequences**, not multiple alignment results. 
 ## Optional Arguments
 - rewire: 1 means do rewire while 0 means not do rewire [default 1]
