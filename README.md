@@ -1,5 +1,5 @@
 # GLaMST
-This algorithm is developed to reconstruct lineage tree of hyper-mutation from subset of tree nodes.
+This algorithm is developed to reconstruct lineage tree from subset of tree nodes.
 
 Download GLaMST from [this link](https://github.com/xysheep/GLaMST/releases)
 
