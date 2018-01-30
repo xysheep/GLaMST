@@ -199,8 +199,6 @@ $RECYCLE.BIN/
 *.mex*
 *.jpg
 *.jpeg
-*.png
-*.html
 *.tiff
 *.mat
 # Simulink Code Generation

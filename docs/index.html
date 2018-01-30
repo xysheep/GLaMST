@@ -1,0 +1,292 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>index</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-01-30"><meta name="DC.source" content="index.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Prepare Environment</a></li><li><a href="#2">Simulate data</a></li><li><a href="#3">Run GLaMST and visualize the results</a></li><li><a href="#4">Generate lineage tree from real data</a></li></ul></div><h2 id="1">Prepare Environment</h2><p>Set working directory to the upzipped folder. If your matlab does not have C/C++ compiler setup, need to first install MinGW, instructions at following link (Home-&gt;Add-Ons-&gt;search MinGW-&gt;install) <a href="https://www.mathworks.com/help/matlab/matlab_external/install-mingw-support-package.html">https://www.mathworks.com/help/matlab/matlab_external/install-mingw-support-package.html</a></p><pre class="codeinput">restoredefaultpath;
+addpath <span class="string">lib</span>
+addpath <span class="string">src</span>
+<span class="comment">% If your matlab does not have C/C++ copmiler setup, also run</span>
+mex <span class="string">src/editDist_only.cpp</span>
+mex <span class="string">src/backtrace.cpp</span>
+</pre><pre class="codeoutput">Building with 'Microsoft Visual C++ 2013 Professional'.
+MEX completed successfully.
+Building with 'Microsoft Visual C++ 2013 Professional'.
+MEX completed successfully.
+</pre><h2 id="2">Simulate data</h2><p>Simulate a dataset that</p><pre class="codeinput">operation_probability = [0.99 0.005 0.005];<span class="comment">% mutation, insertion, deletion chance</span>
+sequence_length = 300; <span class="comment">% Length of the seqeunces</span>
+num_tree_nodes = 200; <span class="comment">% Total number of the real tree</span>
+sample_size = 100; <span class="comment">% Number of observed nodes</span>
+rng(42); <span class="comment">%% Fix the random seed;</span>
+[observed_sequences, true_sequences, adj, is_selected] = simulate_data_v2(<span class="keyword">...</span>
+    sequence_length,num_tree_nodes,sample_size,operation_probability);
+draw_hierarchy_tree(adj, is_selected');
+</pre><pre class="codeoutput">Simulation:
+    simulate a tree with 200 nodes, and 101 observed sequences (include root) ....   200
+    obtained tree size: 144 nodes, 101 observed sequences.
+</pre><img vspace="5" hspace="5" src="index_01.png" alt=""> <h2 id="3">Run GLaMST and visualize the results</h2><p>This section is a example of using GLaMST. You need to pass a variable "observed_sequences" that contain a cell array of known sequences to function "reconstruct_tree_minimun_tree_size".  Make sure the first sequence of "observed_sequences" should be root(G.L.).  "reconstructed_nodes" is a cell array of sequences of the reconstructed tree. "reconstructed_is_selected" is the index of tree nodes that known before the reconstruction. "reconstructed_directed_adj" is the adjecent matrix that represent the hierarchical structure of the tree.</p><pre class="codeinput">[reconstructed_nodes,mst_adj,reconstructed_is_selected, reconstructed_directed_adj] = <span class="keyword">...</span>
+    reconstruct_tree_minimun_tree_size(observed_sequences);
+draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
+</pre><pre class="codeoutput">Reconstruction:
+    Initialization compute pairwise edit distance:   100 /   101Elapsed time is 2.063209 seconds.
+    Iteratived build the tree:     1 /   100    Iteratived build the tree:     2 /   100Elapsed time is 0.097324 seconds.
+    Iteratived build the tree:     3 /    99Elapsed time is 0.057774 seconds.
+    Iteratived build the tree:     4 /    98Elapsed time is 0.057003 seconds.
+    Iteratived build the tree:     5 /    98Elapsed time is 0.097420 seconds.
+    Iteratived build the tree:     6 /    97Elapsed time is 0.058706 seconds.
+    Iteratived build the tree:     7 /    96Elapsed time is 0.057239 seconds.
+    Iteratived build the tree:     8 /    96Elapsed time is 0.092075 seconds.
+    Iteratived build the tree:     9 /    96Elapsed time is 0.092663 seconds.
+    Iteratived build the tree:    10 /    95Elapsed time is 0.066948 seconds.
+    Iteratived build the tree:    11 /    95Elapsed time is 0.093314 seconds.
+    Iteratived build the tree:    12 /    95Elapsed time is 0.097233 seconds.
+    Iteratived build the tree:    13 /    94Elapsed time is 0.063328 seconds.
+    Iteratived build the tree:    14 /    94Elapsed time is 0.096990 seconds.
+    Iteratived build the tree:    15 /    93Elapsed time is 0.055171 seconds.
+    Iteratived build the tree:    16 /    92Elapsed time is 0.054795 seconds.
+    Iteratived build the tree:    17 /    92Elapsed time is 0.094328 seconds.
+    Iteratived build the tree:    18 /    91Elapsed time is 0.074787 seconds.
+    Iteratived build the tree:    19 /    90Elapsed time is 0.055302 seconds.
+    Iteratived build the tree:    20 /    90Elapsed time is 0.092734 seconds.
+    Iteratived build the tree:    21 /    89Elapsed time is 0.053776 seconds.
+    Iteratived build the tree:    22 /    88Elapsed time is 0.053098 seconds.
+    Iteratived build the tree:    23 /    87Elapsed time is 0.052712 seconds.
+    Iteratived build the tree:    24 /    87Elapsed time is 0.094187 seconds.
+    Iteratived build the tree:    25 /    87Elapsed time is 0.093970 seconds.
+    Iteratived build the tree:    26 /    86Elapsed time is 0.053987 seconds.
+    Iteratived build the tree:    27 /    85Elapsed time is 0.053594 seconds.
+    Iteratived build the tree:    28 /    84Elapsed time is 0.052939 seconds.
+    Iteratived build the tree:    29 /    83Elapsed time is 0.052698 seconds.
+    Iteratived build the tree:    30 /    83Elapsed time is 0.093515 seconds.
+    Iteratived build the tree:    31 /    83Elapsed time is 0.094099 seconds.
+    Iteratived build the tree:    32 /    83Elapsed time is 0.100089 seconds.
+    Iteratived build the tree:    33 /    82Elapsed time is 0.073351 seconds.
+    Iteratived build the tree:    34 /    82Elapsed time is 0.119826 seconds.
+    Iteratived build the tree:    35 /    81Elapsed time is 0.054922 seconds.
+    Iteratived build the tree:    36 /    81Elapsed time is 0.095595 seconds.
+    Iteratived build the tree:    37 /    80Elapsed time is 0.052479 seconds.
+    Iteratived build the tree:    38 /    80Elapsed time is 0.096076 seconds.
+    Iteratived build the tree:    39 /    79Elapsed time is 0.052370 seconds.
+    Iteratived build the tree:    40 /    78Elapsed time is 0.052210 seconds.
+    Iteratived build the tree:    41 /    78Elapsed time is 0.096447 seconds.
+    Iteratived build the tree:    42 /    77Elapsed time is 0.053584 seconds.
+    Iteratived build the tree:    43 /    76Elapsed time is 0.055781 seconds.
+    Iteratived build the tree:    44 /    76Elapsed time is 0.096923 seconds.
+    Iteratived build the tree:    45 /    75Elapsed time is 0.052403 seconds.
+    Iteratived build the tree:    46 /    74Elapsed time is 0.050937 seconds.
+    Iteratived build the tree:    47 /    73Elapsed time is 0.053455 seconds.
+    Iteratived build the tree:    48 /    73Elapsed time is 0.103933 seconds.
+    Iteratived build the tree:    49 /    72Elapsed time is 0.058678 seconds.
+    Iteratived build the tree:    50 /    71Elapsed time is 0.055317 seconds.
+    Iteratived build the tree:    51 /    70Elapsed time is 0.058069 seconds.
+    Iteratived build the tree:    52 /    69Elapsed time is 0.051343 seconds.
+    Iteratived build the tree:    53 /    68Elapsed time is 0.056700 seconds.
+    Iteratived build the tree:    54 /    68Elapsed time is 0.096008 seconds.
+    Iteratived build the tree:    55 /    67Elapsed time is 0.051301 seconds.
+    Iteratived build the tree:    56 /    66Elapsed time is 0.050802 seconds.
+    Iteratived build the tree:    57 /    66Elapsed time is 0.094922 seconds.
+    Iteratived build the tree:    58 /    65Elapsed time is 0.048600 seconds.
+    Iteratived build the tree:    59 /    64Elapsed time is 0.047914 seconds.
+    Iteratived build the tree:    60 /    63Elapsed time is 0.048086 seconds.
+    Iteratived build the tree:    61 /    62Elapsed time is 0.048302 seconds.
+    Iteratived build the tree:    62 /    62Elapsed time is 0.093667 seconds.
+    Iteratived build the tree:    63 /    61Elapsed time is 0.049048 seconds.
+    Iteratived build the tree:    64 /    61Elapsed time is 0.101637 seconds.
+    Iteratived build the tree:    65 /    60Elapsed time is 0.048189 seconds.
+    Iteratived build the tree:    66 /    59Elapsed time is 0.047870 seconds.
+    Iteratived build the tree:    67 /    58Elapsed time is 0.046675 seconds.
+    Iteratived build the tree:    68 /    57Elapsed time is 0.047349 seconds.
+    Iteratived build the tree:    69 /    56Elapsed time is 0.051590 seconds.
+    Iteratived build the tree:    70 /    55Elapsed time is 0.046293 seconds.
+    Iteratived build the tree:    71 /    55Elapsed time is 0.089495 seconds.
+    Iteratived build the tree:    72 /    54Elapsed time is 0.047590 seconds.
+    Iteratived build the tree:    73 /    54Elapsed time is 0.090626 seconds.
+    Iteratived build the tree:    74 /    53Elapsed time is 0.045832 seconds.
+    Iteratived build the tree:    75 /    52Elapsed time is 0.043632 seconds.
+    Iteratived build the tree:    76 /    51Elapsed time is 0.041963 seconds.
+    Iteratived build the tree:    77 /    50Elapsed time is 0.042059 seconds.
+    Iteratived build the tree:    78 /    49Elapsed time is 0.040300 seconds.
+    Iteratived build the tree:    79 /    48Elapsed time is 0.040195 seconds.
+    Iteratived build the tree:    80 /    48Elapsed time is 0.085666 seconds.
+    Iteratived build the tree:    81 /    47Elapsed time is 0.040191 seconds.
+    Iteratived build the tree:    82 /    46Elapsed time is 0.053747 seconds.
+    Iteratived build the tree:    83 /    45Elapsed time is 0.040425 seconds.
+    Iteratived build the tree:    84 /    44Elapsed time is 0.041344 seconds.
+    Iteratived build the tree:    85 /    44Elapsed time is 0.095211 seconds.
+    Iteratived build the tree:    86 /    43Elapsed time is 0.039994 seconds.
+    Iteratived build the tree:    87 /    43Elapsed time is 0.085759 seconds.
+    Iteratived build the tree:    88 /    42Elapsed time is 0.041693 seconds.
+    Iteratived build the tree:    89 /    41Elapsed time is 0.039587 seconds.
+    Iteratived build the tree:    90 /    41Elapsed time is 0.087935 seconds.
+    Iteratived build the tree:    91 /    40Elapsed time is 0.037178 seconds.
+    Iteratived build the tree:    92 /    39Elapsed time is 0.041629 seconds.
+    Iteratived build the tree:    93 /    38Elapsed time is 0.036061 seconds.
+    Iteratived build the tree:    94 /    37Elapsed time is 0.036564 seconds.
+    Iteratived build the tree:    95 /    36Elapsed time is 0.030875 seconds.
+    Iteratived build the tree:    96 /    35Elapsed time is 0.030464 seconds.
+    Iteratived build the tree:    97 /    34Elapsed time is 0.029607 seconds.
+    Iteratived build the tree:    98 /    33Elapsed time is 0.028958 seconds.
+    Iteratived build the tree:    99 /    32Elapsed time is 0.029557 seconds.
+    Iteratived build the tree:   100 /    31Elapsed time is 0.027587 seconds.
+    Iteratived build the tree:   101 /    30Elapsed time is 0.026431 seconds.
+    Iteratived build the tree:   102 /    29Elapsed time is 0.025121 seconds.
+    Iteratived build the tree:   103 /    28Elapsed time is 0.024856 seconds.
+    Iteratived build the tree:   104 /    27Elapsed time is 0.024176 seconds.
+    Iteratived build the tree:   105 /    27Elapsed time is 0.070279 seconds.
+    Iteratived build the tree:   106 /    26Elapsed time is 0.025747 seconds.
+    Iteratived build the tree:   107 /    25Elapsed time is 0.022441 seconds.
+    Iteratived build the tree:   108 /    24Elapsed time is 0.022101 seconds.
+    Iteratived build the tree:   109 /    24Elapsed time is 0.067976 seconds.
+    Iteratived build the tree:   110 /    23Elapsed time is 0.022293 seconds.
+    Iteratived build the tree:   111 /    22Elapsed time is 0.020540 seconds.
+    Iteratived build the tree:   112 /    21Elapsed time is 0.019641 seconds.
+    Iteratived build the tree:   113 /    21Elapsed time is 0.068744 seconds.
+    Iteratived build the tree:   114 /    20Elapsed time is 0.019082 seconds.
+    Iteratived build the tree:   115 /    19Elapsed time is 0.018356 seconds.
+    Iteratived build the tree:   116 /    19Elapsed time is 0.067131 seconds.
+    Iteratived build the tree:   117 /    18Elapsed time is 0.019570 seconds.
+    Iteratived build the tree:   118 /    18Elapsed time is 0.065829 seconds.
+    Iteratived build the tree:   119 /    18Elapsed time is 0.065863 seconds.
+    Iteratived build the tree:   120 /    17Elapsed time is 0.016696 seconds.
+    Iteratived build the tree:   121 /    16Elapsed time is 0.016216 seconds.
+    Iteratived build the tree:   122 /    15Elapsed time is 0.016266 seconds.
+    Iteratived build the tree:   123 /    14Elapsed time is 0.014102 seconds.
+    Iteratived build the tree:   124 /    14Elapsed time is 0.064317 seconds.
+    Iteratived build the tree:   125 /    13Elapsed time is 0.016343 seconds.
+    Iteratived build the tree:   126 /    12Elapsed time is 0.012204 seconds.
+    Iteratived build the tree:   127 /    11Elapsed time is 0.011262 seconds.
+    Iteratived build the tree:   128 /    11Elapsed time is 0.059521 seconds.
+    Iteratived build the tree:   129 /    10Elapsed time is 0.010530 seconds.
+    Iteratived build the tree:   130 /     9Elapsed time is 0.009567 seconds.
+    Iteratived build the tree:   131 /     8Elapsed time is 0.008683 seconds.
+    Iteratived build the tree:   132 /     8Elapsed time is 0.057772 seconds.
+    Iteratived build the tree:   133 /     7Elapsed time is 0.008702 seconds.
+    Iteratived build the tree:   134 /     6Elapsed time is 0.007783 seconds.
+    Iteratived build the tree:   135 /     5Elapsed time is 0.006527 seconds.
+    Iteratived build the tree:   136 /     5Elapsed time is 0.056364 seconds.
+    Iteratived build the tree:   137 /     4Elapsed time is 0.006104 seconds.
+    Iteratived build the tree:   138 /     3Elapsed time is 0.005279 seconds.
+    Iteratived build the tree:   139 /     3Elapsed time is 0.054277 seconds.
+    Iteratived build the tree:   140 /     2Elapsed time is 0.005885 seconds.
+    Iteratived build the tree:   141 /     2Elapsed time is 0.078826 seconds.
+    Iteratived build the tree:   142 /     1Elapsed time is 0.003664 seconds.
+    Iteratived build the tree:   143 /     0Elapsed time is 0.003433 seconds.
+    Trim the tree for un-necessary nodes ... 
+    Rewire the tree to further reduce size ... 143 
+</pre><img vspace="5" hspace="5" src="index_02.png" alt=""> <h2 id="4">Generate lineage tree from real data</h2><p>Given this data is not yet publicly avaliable, we have simulated a dataset that has exactly the same topology as used in our paper. This simulated data is avaliable here <a href="https://github.com/xysheep/GLaMST/blob/master/demodata/real.fasta">https://github.com/xysheep/GLaMST/blob/master/demodata/real.fasta</a>. fsa = fastaread('demodata/real.fasta'); observed_sequences = fsa.Sequence; [reconstructed_nodes,mst_adj,reconstructed_is_selected, reconstructed_directed_adj] = ...     reconstruct_tree_minimun_tree_size(observed_sequences); draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Prepare Environment
+% Set working directory to the upzipped folder. If your matlab does not have
+% C/C++ compiler setup, need to first install MinGW, instructions at 
+% following link (Home->Add-Ons->search MinGW->install) 
+% <https://www.mathworks.com/help/matlab/matlab_external/install-mingw-support-package.html>
+
+restoredefaultpath;
+addpath lib
+addpath src
+% If your matlab does not have C/C++ copmiler setup, also run 
+mex src/editDist_only.cpp
+mex src/backtrace.cpp
+
+
+%% Simulate data
+% Simulate a dataset that 
+operation_probability = [0.99 0.005 0.005];% mutation, insertion, deletion chance
+sequence_length = 300; % Length of the seqeunces
+num_tree_nodes = 200; % Total number of the real tree
+sample_size = 100; % Number of observed nodes
+rng(42); %% Fix the random seed;
+[observed_sequences, true_sequences, adj, is_selected] = simulate_data_v2(...
+    sequence_length,num_tree_nodes,sample_size,operation_probability);
+draw_hierarchy_tree(adj, is_selected');
+
+%% Run GLaMST and visualize the results
+% This section is a example of using GLaMST. You need to pass a variable
+% "observed_sequences" that contain a cell array of known sequences to
+% function "reconstruct_tree_minimun_tree_size". ** Make sure the first
+% sequence of "observed_sequences" should be root(G.L.). **
+% "reconstructed_nodes" is a cell array of sequences of the reconstructed
+% tree. "reconstructed_is_selected" is the index of tree nodes that known
+% before the reconstruction. "reconstructed_directed_adj" is the adjecent
+% matrix that represent the hierarchical structure of the tree.
+[reconstructed_nodes,mst_adj,reconstructed_is_selected, reconstructed_directed_adj] = ...
+    reconstruct_tree_minimun_tree_size(observed_sequences);
+draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
+
+
+%% Generate lineage tree from real data
+% Given this data is not yet publicly avaliable, we have simulated a
+% dataset that has exactly the same topology as used in our paper. This
+% simulated data is avaliable here
+% <https://github.com/xysheep/GLaMST/blob/master/demodata/real.fasta>.
+% fsa = fastaread('demodata/real.fasta');
+% observed_sequences = fsa.Sequence;
+% [reconstructed_nodes,mst_adj,reconstructed_is_selected, reconstructed_directed_adj] = ...
+%     reconstruct_tree_minimun_tree_size(observed_sequences);
+% draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
+
+##### SOURCE END #####
+--></body></html>

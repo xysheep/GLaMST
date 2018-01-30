@@ -40,9 +40,10 @@ draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
 %% Generate lineage tree from real data
 % Given this data is not yet publicly avaliable, we have simulated a
 % dataset that has exactly the same topology as used in our paper. This
-% simulated data is avaliable here <>. 
-fsa = fastaread('demodata/real.fasta');
-observed_sequences = fas.Sequence;
-[reconstructed_nodes,mst_adj,reconstructed_is_selected, reconstructed_directed_adj] = ...
-    reconstruct_tree_minimun_tree_size(observed_sequences);
-draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
+% simulated data is avaliable here
+% <https://github.com/xysheep/GLaMST/blob/master/demodata/real.fasta>.
+% fsa = fastaread('demodata/real.fasta');
+% observed_sequences = fsa.Sequence;
+% [reconstructed_nodes,mst_adj,reconstructed_is_selected, reconstructed_directed_adj] = ...
+%     reconstruct_tree_minimun_tree_size(observed_sequences);
+% draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
