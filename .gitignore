@@ -266,3 +266,5 @@ S3Compare_Real_Tree.m
 parseDNAPARS.ipynb
 Untitled.ipynb
 option
+demodata/real.fasta.out.fa
+demodata/real.fasta.out.tree
