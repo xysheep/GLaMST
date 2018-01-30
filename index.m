@@ -1,4 +1,8 @@
-%% Prepare Environment
+%% Grow Lineages along Minimum Spanning Tree for B Cell Recptor Seqeuence Data
+% This page provides some examples of using source code version of GLaMST.
+
+
+%% Prepare environment
 % Set working directory to the upzipped folder. If your matlab does not have
 % C/C++ compiler setup, need to first install MinGW, instructions at 
 % following link (Home->Add-Ons->search MinGW->install) 
@@ -39,11 +43,13 @@ draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
 
 %% Generate lineage tree from real data
 % Given this data is not yet publicly avaliable, we have simulated a
-% dataset that has exactly the same topology as used in our paper. This
-% simulated data is avaliable here
-% <https://github.com/xysheep/GLaMST/blob/master/demodata/real.fasta>.
-% fsa = fastaread('demodata/real.fasta');
-% observed_sequences = fsa.Sequence;
-% [reconstructed_nodes,mst_adj,reconstructed_is_selected, reconstructed_directed_adj] = ...
-%     reconstruct_tree_minimun_tree_size(observed_sequences);
-% draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
+% dataset that has exactly the same topology as used in our paper ( with
+% sequences order shuffled and nucleobase exchenged). This simulated data
+% is avaliable here
+% <https://github.com/xysheep/GLaMST/blob/master/demodata>.
+fsa = fastaread('demodata/real.fasta');
+observed_sequences = {fsa.Sequence}';
+
+[reconstructed_nodes,mst_adj,reconstructed_is_selected, reconstructed_directed_adj] = ...
+    reconstruct_tree_minimun_tree_size(observed_sequences);
+draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);

@@ -1,5 +1,6 @@
 function [all_sequences,mst_adj,reconstructed_observed_indicator, reconstructed_directed_adj] = reconstruct_tree_minimun_tree_size(observed_sequences, rewire)
-
+% Remove replicated sequences
+observed_sequences = [observed_sequences(1); unique(observed_sequences(2:end))]; 
 if ~exist('rewire','var')
     rewire = 1;
 end
@@ -29,7 +30,7 @@ reconstructed_observed_indicator = zeros(size(all_sequences)); reconstructed_obs
 reconstructed_directed_adj = zeros(size(all_sequences));
 
 fprintf('    Iteratived build the tree: %5d / %5d',sum(reconstructed_indicator),length(observed_sequences)-sum(reconstructed_observed_indicator));
-
+k = 0;
 while sum(reconstructed_indicator==0)~=0
     tic
     
@@ -136,9 +137,9 @@ while sum(reconstructed_indicator==0)~=0
         
     % display progress
 %     fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b%5d / %5d',sum(reconstructed_indicator),length(observed_sequences)-sum(reconstructed_observed_indicator));
-
     fprintf('    Iteratived build the tree: %5d / %5d',sum(reconstructed_indicator),length(observed_sequences)-sum(reconstructed_observed_indicator));
     toc
+    k = k + 1;
     %save reconstruct_tree_minimun_tree_size_tmp.mat
 
 end
