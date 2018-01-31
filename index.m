@@ -11,7 +11,6 @@
 restoredefaultpath;
 addpath lib
 addpath src
-% If your matlab does not have C/C++ copmiler setup, also run 
 mex src/editDist_only.cpp
 mex src/backtrace.cpp
 

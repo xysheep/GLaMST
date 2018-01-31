@@ -146,7 +146,7 @@ for k=1:length(node_size)
     if exist('is_selected') && is_selected(k)==1
         % do nothing;
     else
-        handle_tmp = plot(coeff(1,k),coeff(2,k),'.','markersize',node_size(k), 'markerfacecolor',node_color(k,:),'color',node_color(k,:));
+        handle_tmp = plot(coeff(1,k),coeff(2,k),'o','markersize',node_size(k), 'markerfacecolor',[1 1 1], 'color',node_color(k,:));
     end
 end
 for k=1:length(node_size)

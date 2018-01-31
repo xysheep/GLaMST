@@ -51,9 +51,9 @@ node_positions(2,:) = (max(depth_level)-depth_level+1)/max(depth_level);
 node_positions(1,:) = ((node_positions(1,:) - min(node_positions(1,:)))/(max(node_positions(1,:))-min(node_positions(1,:))) - 0.5)*2*50;
 node_positions(2,:) = ((node_positions(2,:) - min(node_positions(2,:)))/(max(node_positions(2,:))-min(node_positions(2,:))) - 0.5)*2*50;
 
-node_size = ones(1,size(node_positions,2)); 
-node_size(reconstructed_is_selected==1) = 2;
+node_size = 0.1*ones(1,size(node_positions,2)); 
+node_size(reconstructed_is_selected==1) = 1;
 node_size(1) = 10;
-node_color_data = reconstructed_is_selected * [1 1 1];
-%node_color_data(node_color_data==0)=NaN;
+node_size(:)=8;
+node_color_data = ones(size(reconstructed_is_selected));
 [~, h]=draw_SPADE_tree_annotation(reconstructed_directed_adj+reconstructed_directed_adj', node_positions, node_size, node_color_data, [-1,1], 1, 0, reconstructed_is_selected, 'jet', [], []);
