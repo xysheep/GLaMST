@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Grow Lineages along Minimum Spanning Tree for B Cell Recptor Seqeuence Data</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-01-30"><meta name="DC.source" content="index.m"><style type="text/css">
+      --><title>Grow Lineages along Minimum Spanning Tree for B Cell Recptor Seqeuence Data</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-01-31"><meta name="DC.source" content="index.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -69,7 +69,6 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
   </style></head><body><div class="content"><h1>Grow Lineages along Minimum Spanning Tree for B Cell Recptor Seqeuence Data</h1><!--introduction--><p>This page provides some examples of using source code version of GLaMST.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Prepare environment</a></li><li><a href="#2">Simulate data</a></li><li><a href="#3">Run GLaMST and visualize the results</a></li><li><a href="#4">Generate lineage tree from real data</a></li></ul></div><h2 id="1">Prepare environment</h2><p>Set working directory to the upzipped folder. If your matlab does not have C/C++ compiler setup, need to first install MinGW, instructions at following link (Home-&gt;Add-Ons-&gt;search MinGW-&gt;install) <a href="https://www.mathworks.com/help/matlab/matlab_external/install-mingw-support-package.html">https://www.mathworks.com/help/matlab/matlab_external/install-mingw-support-package.html</a></p><pre class="codeinput">restoredefaultpath;
 addpath <span class="string">lib</span>
 addpath <span class="string">src</span>
-<span class="comment">% If your matlab does not have C/C++ copmiler setup, also run</span>
 mex <span class="string">src/editDist_only.cpp</span>
 mex <span class="string">src/backtrace.cpp</span>
 </pre><pre class="codeoutput">Building with 'Microsoft Visual C++ 2013 Professional'.
@@ -91,24 +90,16 @@ draw_hierarchy_tree(adj, is_selected');
     reconstruct_tree_minimun_tree_size(observed_sequences);
 draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
 </pre><pre class="codeoutput">Reconstruction:
-    Initialization compute pairwise edit distance:   100 /   101Elapsed time is 2.069024 seconds.
-    Iteratived build the tree:     1 /   100    
-    Iteratived build the tree:     2 /   100Elapsed time is 0.110925 seconds.
-    Iteratived build the tree:     3 /    99Elapsed time is 0.065030 seconds.
-    Iteratived build the tree:     4 /    98Elapsed time is 0.060818 seconds.
-    Iteratived build the tree:     5 /    98Elapsed time is 0.095147 seconds.
-    Iteratived build the tree:     6 /    97Elapsed time is 0.065485 seconds.
-    Iteratived build the tree:     7 /    96Elapsed time is 0.061118 seconds.
-    Iteratived build the tree:     8 /    96Elapsed time is 0.100322 seconds.
-    Iteratived build the tree:     9 /    96Elapsed time is 0.098007 seconds.
-	......
-    Iteratived build the tree:   137 /     4Elapsed time is 0.006671 seconds.
-    Iteratived build the tree:   138 /     4Elapsed time is 0.056820 seconds.
-    Iteratived build the tree:   139 /     3Elapsed time is 0.005581 seconds.
-    Iteratived build the tree:   140 /     3Elapsed time is 0.056422 seconds.
-    Iteratived build the tree:   141 /     2Elapsed time is 0.004810 seconds.
-    Iteratived build the tree:   142 /     1Elapsed time is 0.004437 seconds.
-    Iteratived build the tree:   143 /     0Elapsed time is 0.004837 seconds.
+    Initialization compute pairwise edit distance:   100 /   101Elapsed time is 1.944908 seconds.
+    Iteratived build the tree:     1 /   100    Iteratived build the tree:     2 /   100Elapsed time is 0.122880 seconds.
+    Iteratived build the tree:     3 /    99Elapsed time is 0.065291 seconds.
+    Iteratived build the tree:     4 /    98Elapsed time is 0.061145 seconds.
+    Iteratived build the tree:     5 /    98Elapsed time is 0.097610 seconds.
+    Iteratived build the tree:     6 /    97Elapsed time is 0.061575 seconds.
+    ......
+    Iteratived build the tree:   141 /     2Elapsed time is 0.006475 seconds.
+    Iteratived build the tree:   142 /     1Elapsed time is 0.005673 seconds.
+    Iteratived build the tree:   143 /     0Elapsed time is 0.003512 seconds.
     Trim the tree for un-necessary nodes ... 
     Rewire the tree to further reduce size ... 143 
 </pre><img vspace="5" hspace="5" src="index_02.png" alt=""> <h2 id="4">Generate lineage tree from real data</h2><p>Given this data is not yet publicly avaliable, we have simulated a dataset that has exactly the same topology as used in our paper ( with sequences order shuffled and nucleobase exchenged). This simulated data is avaliable here <a href="https://github.com/xysheep/GLaMST/blob/master/demodata">https://github.com/xysheep/GLaMST/blob/master/demodata</a>.</p><pre class="codeinput">fsa = fastaread(<span class="string">'demodata/real.fasta'</span>);
@@ -118,34 +109,28 @@ observed_sequences = {fsa.Sequence}';
     reconstruct_tree_minimun_tree_size(observed_sequences);
 draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
 </pre><pre class="codeoutput">Reconstruction:
-    Initialization compute pairwise edit distance:   541 /   542Elapsed time is 41.352283 seconds.
-    Iteratived build the tree:     1 /   541    Iteratived build the tree:     2 /   541Elapsed time is 1.228058 seconds.
-    Iteratived build the tree:     3 /   541Elapsed time is 1.224144 seconds.
-    Iteratived build the tree:     4 /   541Elapsed time is 1.197058 seconds.
-    Iteratived build the tree:     5 /   541Elapsed time is 1.184864 seconds.
-    Iteratived build the tree:     6 /   541Elapsed time is 1.184441 seconds.
-    Iteratived build the tree:     7 /   541Elapsed time is 1.159806 seconds.
-    Iteratived build the tree:     8 /   541Elapsed time is 1.148445 seconds.
-    Iteratived build the tree:     9 /   541Elapsed time is 1.134424 seconds.
-    Iteratived build the tree:    10 /   541Elapsed time is 1.110026 seconds.
-    Iteratived build the tree:    11 /   541Elapsed time is 1.108676 seconds.
-    Iteratived build the tree:    12 /   541Elapsed time is 1.110550 seconds.
-	......
-    Iteratived build the tree:  1821 /     6Elapsed time is 0.111987 seconds.
-    Iteratived build the tree:  1822 /     6Elapsed time is 0.654896 seconds.
-    Iteratived build the tree:  1823 /     5Elapsed time is 0.111856 seconds.
-    Iteratived build the tree:  1824 /     4Elapsed time is 0.114114 seconds.
-    Iteratived build the tree:  1825 /     3Elapsed time is 0.114263 seconds.
-    Iteratived build the tree:  1826 /     2Elapsed time is 0.115403 seconds.
-    Iteratived build the tree:  1827 /     1Elapsed time is 0.113039 seconds.
-    Iteratived build the tree:  1828 /     1Elapsed time is 0.655996 seconds.
-    Iteratived build the tree:  1829 /     0Elapsed time is 0.107025 seconds.
+    Initialization compute pairwise edit distance:   541 /   542Elapsed time is 42.614710 seconds.
+    Iteratived build the tree:     1 /   541    Iteratived build the tree:     2 /   541Elapsed time is 1.257989 seconds.
+    Iteratived build the tree:     3 /   541Elapsed time is 1.303419 seconds.
+    Iteratived build the tree:     4 /   541Elapsed time is 1.212983 seconds.
+    Iteratived build the tree:     5 /   541Elapsed time is 1.208741 seconds.
+    Iteratived build the tree:     6 /   541Elapsed time is 1.233536 seconds.
+    Iteratived build the tree:     7 /   541Elapsed time is 1.191659 seconds.
+    Iteratived build the tree:     8 /   541Elapsed time is 1.195771 seconds.
+    ......
+    Iteratived build the tree:  1823 /     5Elapsed time is 0.110148 seconds.
+    Iteratived build the tree:  1824 /     4Elapsed time is 0.110480 seconds.
+    Iteratived build the tree:  1825 /     3Elapsed time is 0.117508 seconds.
+    Iteratived build the tree:  1826 /     2Elapsed time is 0.129545 seconds.
+    Iteratived build the tree:  1827 /     1Elapsed time is 0.107900 seconds.
+    Iteratived build the tree:  1828 /     1Elapsed time is 0.700191 seconds.
+    Iteratived build the tree:  1829 /     0Elapsed time is 0.122778 seconds.
     Trim the tree for un-necessary nodes ... 
     Rewire the tree to further reduce size ... 1192 
-    Rewire the tree to further reduce size ... 1191   Elapsed time is 7.506025 seconds.
-    Rewire the tree to further reduce size ... 1190   Elapsed time is 3.985552 seconds.
-    Rewire the tree to further reduce size ... 1190   Elapsed time is 4.354102 seconds.
-    Rewire the tree to further reduce size ... 1190   Elapsed time is 4.321681 seconds.
+    Rewire the tree to further reduce size ... 1191   Elapsed time is 7.799285 seconds.
+    Rewire the tree to further reduce size ... 1190   Elapsed time is 4.242021 seconds.
+    Rewire the tree to further reduce size ... 1190   Elapsed time is 4.248689 seconds.
+    Rewire the tree to further reduce size ... 1190   Elapsed time is 4.290912 seconds.
 </pre><img vspace="5" hspace="5" src="index_03.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Grow Lineages along Minimum Spanning Tree for B Cell Recptor Seqeuence Data
@@ -161,7 +146,6 @@ draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
 restoredefaultpath;
 addpath lib
 addpath src
-% If your matlab does not have C/C++ copmiler setup, also run 
 mex src/editDist_only.cpp
 mex src/backtrace.cpp
 
