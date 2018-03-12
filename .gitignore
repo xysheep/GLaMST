@@ -104,3 +104,5 @@ demodata/real.fasta.out.fa
 demodata/real.fasta.out.tree
 editDist_only.mexw64
 backtrace.mexw64
+lib/clustalw2.exe
+lib/dnapars.exe
