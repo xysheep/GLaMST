@@ -39,6 +39,13 @@ draw_hierarchy_tree(adj, is_selected');
     reconstruct_tree_minimun_tree_size(observed_sequences);
 draw_hierarchy_tree(reconstructed_directed_adj, reconstructed_is_selected);
 
+%% Write Reconstructed Tree to File
+% Use the command below to write the reconstructed tree to file. This
+% command will generate two files. In simulated.out.tree
+% file, each row coresponds to one single node. First item each row is node
+% name and the following items are its children. In simulated.out.fa file,
+% all the observed sequences and inserted seqeunces are presented. 
+Write_tree_toFile(reconstructed_nodes, reconstructed_directed_adj, reconstructed_is_selected, 'simulated');
 
 %% Generate lineage tree from real data
 % Given this data is not yet publicly avaliable, we have simulated a

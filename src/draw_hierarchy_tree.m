@@ -45,7 +45,7 @@ node_positions = [x;(max(depth_level)-depth_level+1)/max(depth_level)];
 % % h.YData = node_positions(2,:);
 % highlight(h, find(reconstructed_is_selected), 'NodeColor','r')
 % highlight(h, 1, 'NodeColor','r', 'MarkerSize',10);
-node_positions = spring_layout(reconstructed_directed_adj + reconstructed_directed_adj', node_positions');
+node_positions = spring_layout_v2(reconstructed_directed_adj + reconstructed_directed_adj', node_positions');
 node_positions(2,:) = (max(depth_level)-depth_level+1)/max(depth_level);
 
 node_positions(1,:) = ((node_positions(1,:) - min(node_positions(1,:)))/(max(node_positions(1,:))-min(node_positions(1,:))) - 0.5)*2*50;
