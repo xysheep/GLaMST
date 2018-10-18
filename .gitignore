@@ -108,3 +108,4 @@ lib/clustalw2.exe
 lib/dnapars.exe
 simulated.out.fa
 simulated.out.tree
+*.bak
